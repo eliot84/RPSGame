@@ -14,10 +14,47 @@ define(['firebase'], function(fb){
   //INITIALIZE FIREBASE
   firebase.initializeApp(config);
   var database = firebase.database();
+  /*var setup = database.ref("games/setup");
+
+      setup.set({
+        roomA: { name: "ed", choice: "", wins: 0, total: 0}
+        name: "ed",
+        choice: "",
+        wins: 0,
+        losses: 0 
+      });
+  */
+
+    function uniqueId(){
+              return Math.random().toString(36).substr(2, 16);
+            }
+
 
 
     var Methods = {
+
       initialCheck: function(callback){
+        var availability = database.ref("games/setup");
+        availability.once("value", function(snapshot){
+          console.log("This is setup snapshot: " + JSON.stringify( snapshot.val() ) );
+          console.log( snapshot.numChildren() );
+          console.log( uniqueId() );
+          
+          if(snapshot.numChildren() < 2){
+            var gameName = uniqueId();
+
+            availability.update({
+              [gameName]: {player1: "ed", player2: "", player1Choice: "", player2Choice: "", player1Wins: 0, player2Wins: 0, total: 0}
+            });
+          }
+          else{
+            var room = snapshot.val().child();
+            console.log("room is: " + room );
+          }
+        });
+
+
+        //TEST BOX
         var playerRef = database.ref("itworks/");
         playerRef.on("value", function(snapshot){
         console.log(snapshot.val());
