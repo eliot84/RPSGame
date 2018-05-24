@@ -36,19 +36,29 @@ define(['firebase'], function(fb){
       initialCheck: function(callback){
         var availability = database.ref("games/setup");
         availability.once("value", function(snapshot){
-          console.log("This is setup snapshot: " + JSON.stringify( snapshot.val() ) );
+
+          var toy = JSON.stringify( snapshot.val() );
+          console.log("This is setup snapshot: " + toy[3] );
+          console.log(availability.getKey() );
           console.log( snapshot.numChildren() );
-          console.log( uniqueId() );
+
+          snapshot.forEach(function (childSnapshot){
+            var value = childSnapshot.val();
+        
+          });
+
           
           if(snapshot.numChildren() < 2){
             var gameName = uniqueId();
+
+
 
             availability.update({
               [gameName]: {player1: "ed", player2: "", player1Choice: "", player2Choice: "", player1Wins: 0, player2Wins: 0, total: 0}
             });
           }
           else{
-            var room = snapshot.val().child();
+            var room = snapshot.key;
             console.log("room is: " + room );
           }
         });
@@ -57,7 +67,7 @@ define(['firebase'], function(fb){
         //TEST BOX
         var playerRef = database.ref("itworks/");
         playerRef.on("value", function(snapshot){
-        console.log(snapshot.val());
+       // console.log("the child" + playerRef.child() );
         var status = snapshot.val();
         callback(status);
         });
